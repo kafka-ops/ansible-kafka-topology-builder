@@ -1,2 +1,27 @@
 ---
-# tasks file for ansible-kafka-topology-builder
+- name: Make sure the latest version of the topology builder is installed
+  yum:
+    name: kafka-topology-builder
+    state: latest
+
+- name: Setup the configuration file for the Topology Builder
+  template:
+    src: config_file.properties.j2
+    dest: {{ kafka_topology_builder.topology_path }}{{ kafka_topology_builder.config_file }}
+    owner: ktb-kafka
+    group: ktb-kafka
+    mode: u=rw,g=r,o=r
+
+- name: Clone the latest topology configuration sources
+  git:
+    repo: {{ ktb_git_repo }}
+    dest: {{ ktb_destination_path }}
+    version: {{ ktb_source_branch }}
+
+- name: Run the Kafka Topology Builder
+  command:
+    argv:
+      - kafka-topology-builder
+      - --brokers {{ brokers_list }}
+      - --clientConfig {{ kafka_topology_builder.topology_path }}{{ kafka_topology_builder.config_file }}
+      - --topology {{ kafka_topology_builder.topology_path }}{{ kafka_topology_builder.topology_file }}

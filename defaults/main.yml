@@ -1,2 +1,11 @@
 ---
 # defaults file for ansible-kafka-topology-builder
+
+ktb_git_repo: 'https://foosball.example.org/path/to/repo.git'
+ktb_destination_path: "/srv/checkout"
+ktb_source_branch: master
+
+kafka_topology_builder:
+  topology_path: /etc/kafka-topology-builder/
+  topology_file: "topology.yml"
+  config_file: "topology-builder.properties"
